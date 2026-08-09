@@ -3,7 +3,11 @@
 /*** 1. SUPABASE CONFIGURATION ***/
 const SUPABASE_URL = 'https://vrnarcpmttwnowolhxnw.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_mDCab83XNSsH8A1dhlRXAQ_S_MYdkr7'; // public anon key
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Safe initialization whether loaded via global supabase object or window.supabase
+const supabase = (typeof supabase !== 'undefined' && supabase.createClient) 
+  ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) 
+  : window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /*** 2. GLOBAL STATE ***/
 let orders = [];          // fetched orders from Supabase
@@ -167,7 +171,6 @@ function renderMechanicView() {
 
 /*** 9. INITIAL CODE ENTRY UI ***/
 function showCodeEntry() {
-  // Replace the login view content with a single code entry form
   const loginSection = document.getElementById('view-login');
   loginSection.innerHTML = `
     <div class="code-entry-box reveal anim-up">
@@ -202,6 +205,5 @@ function showCodeEntry() {
 
 /*** 10. STARTUP ***/
 document.addEventListener('DOMContentLoaded', async () => {
-  // Immediately show the code entry field – no email/password auth required
   showCodeEntry();
 });

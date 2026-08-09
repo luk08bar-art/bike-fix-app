@@ -1,18 +1,15 @@
-// app.js – BikeFix SPA without email/password auth
+// app.js – BikeFix SPA without email/password authentication
 
 /*** 1. SUPABASE CONFIGURATION ***/
 const SUPABASE_URL = 'https://vrnarcpmttwnowolhxnw.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_mDCab83XNSsH8A1dhlRXAQ_S_MYdkr7'; // public anon key
-
-// Safe initialization whether loaded via global supabase object or window.supabase
-const supabase = (typeof supabase !== 'undefined' && supabase.createClient) 
-  ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) 
-  : window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const SUPABASE_ANON_KEY = 'sb_publishable_mDCab83XNSsH8A1dhlRXAQ_S_MYdkr7';
+const { createClient } = window.supabase;
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /*** 2. GLOBAL STATE ***/
-let orders = [];          // fetched orders from Supabase
-let usedOpinions = [];    // fetched used_opinions from Supabase
-const MECHANIC_CODE = 'nowostandardowy19.18wis'; // special mechanic access code
+let orders = [];          // fetched from Supabase
+let usedOpinions = [];    // fetched from Supabase
+const MECHANIC_CODE = 'nowostandardowy19.18wis'; // mechanic access code
 
 /*** 3. VIEW HELPERS ***/
 function switchView(viewId) {
@@ -37,7 +34,6 @@ async function loadOrders() {
     orders = data;
   }
 }
-
 async function loadUsedOpinions() {
   const { data, error } = await supabase.from('used_opinions').select('opinion');
   if (error) {
@@ -47,31 +43,32 @@ async function loadUsedOpinions() {
     usedOpinions = data.map(r => r.opinion);
   }
 }
-
 async function loadAllData() {
   await Promise.all([loadOrders(), loadUsedOpinions()]);
 }
 
 /*** 5. CRUD HELPERS FOR ORDERS ***/
 async function addOrder(code) {
-  const { error } = await supabase.from('orders').insert({ clientCode: code, status: 'Diagnoza' });
+  const { error } = await supabase.from('orders')
+    .insert({ clientCode: code, status: 'Diagnoza' });
   if (error) console.error('addOrder error:', error);
 }
-
 async function updateOrderStatus(id, newStatus) {
-  const { error } = await supabase.from('orders').update({ status: newStatus }).eq('id', id);
+  const { error } = await supabase.from('orders')
+    .update({ status: newStatus }).eq('id', id);
   if (error) console.error('updateOrderStatus error:', error);
 }
-
 async function deleteOrder(id) {
-  const { error } = await supabase.from('orders').delete().eq('id', id);
+  const { error } = await supabase.from('orders')
+    .delete().eq('id', id);
   if (error) console.error('deleteOrder error:', error);
 }
 
 /*** 6. USED OPINIONS ***/
 async function addUsedOpinion(opinion) {
   if (usedOpinions.includes(opinion)) return;
-  const { error } = await supabase.from('used_opinions').insert({ opinion });
+  const { error } = await supabase.from('used_opinions')
+    .insert({ opinion });
   if (!error) usedOpinions.push(opinion);
 }
 
@@ -79,7 +76,11 @@ async function addUsedOpinion(opinion) {
 function renderCustomerView(clientCode) {
   switchView('view-customer');
   const container = document.getElementById('view-customer');
-  const clientOrders = orders.filter(o => (o.clientCode || o.order_code) && (o.clientCode || o.order_code).toUpperCase() === clientCode.toUpperCase());
+
+  const clientOrders = orders.filter(o =>
+    (o.clientCode || o.order_code) &&
+    (o.clientCode || o.order_code).toUpperCase() === clientCode.toUpperCase()
+  );
 
   container.innerHTML = `
     <h2>Twoje zamówienia</h2>
@@ -94,21 +95,23 @@ function renderCustomerView(clientCode) {
     </form>
   `;
 
-  document.getElementById('new-order-form').addEventListener('submit', async e => {
-    e.preventDefault();
-    const code = document.getElementById('new-order-code').value.trim();
-    if (code) {
-      await addOrder(code);
-      await loadOrders();
-      renderCustomerView(clientCode);
-    }
-  });
+  document.getElementById('new-order-form')
+    .addEventListener('submit', async e => {
+      e.preventDefault();
+      const code = document.getElementById('new-order-code').value.trim();
+      if (code) {
+        await addOrder(code);
+        await loadOrders();
+        renderCustomerView(clientCode);
+      }
+    });
 }
 
 /*** 8. RENDER MECHANIC VIEW ***/
 function renderMechanicView() {
   switchView('view-mechanic');
   const container = document.getElementById('view-mechanic');
+
   container.innerHTML = `
     <h2>Zlecenia serwisanta</h2>
     <table id="orders-table">
@@ -135,7 +138,7 @@ function renderMechanicView() {
     </form>
   `;
 
-  // Fixika button – placeholder for real Fixik widget logic
+  // Fixika (set status to "Gotowe")
   container.querySelectorAll('.fix-button').forEach(btn => {
     btn.addEventListener('click', async e => {
       const tr = e.target.closest('tr');
@@ -146,7 +149,7 @@ function renderMechanicView() {
     });
   });
 
-  // Delete button
+  // Delete order
   container.querySelectorAll('.delete-button').forEach(btn => {
     btn.addEventListener('click', async e => {
       const tr = e.target.closest('tr');
@@ -157,53 +160,44 @@ function renderMechanicView() {
     });
   });
 
-  // New order form handling
-  container.querySelector('#new-order-form').addEventListener('submit', async e => {
-    e.preventDefault();
-    const code = container.querySelector('#new-order-code').value.trim();
-    if (code) {
-      await addOrder(code);
-      await loadOrders();
-      renderMechanicView();
-    }
-  });
+  // Add new order (mechanic)
+  container.querySelector('#new-order-form')
+    .addEventListener('submit', async e => {
+      e.preventDefault();
+      const code = container.querySelector('#new-order-code').value.trim();
+      if (code) {
+        await addOrder(code);
+        await loadOrders();
+        renderMechanicView();
+      }
+    });
 }
 
 /*** 9. INITIAL CODE ENTRY UI ***/
 function showCodeEntry() {
-  const loginSection = document.getElementById('view-login');
-  loginSection.innerHTML = `
-    <div class="code-entry-box reveal anim-up">
-      <h2>Wprowadź kod</h2>
-      <form id="code-form">
-        <div class="input-group">
-          <input type="text" id="access-code" placeholder="Kod klienta lub serwisanta" autocomplete="off" required>
-        </div>
-        <button type="submit" class="btn btn--primary">Sprawdź</button>
-        <p id="code-error-msg" class="error-msg hidden">Niepoprawny kod.</p>
-      </form>
-    </div>
-  `;
+  // The login section already contains the single code form
   switchView('view-login');
 
-  document.getElementById('code-form').addEventListener('submit', async e => {
-    e.preventDefault();
-    const code = document.getElementById('access-code').value.trim();
-    if (!code) {
-      document.getElementById('code-error-msg').classList.remove('hidden');
-      return;
-    }
-    if (code === MECHANIC_CODE) {
-      await loadAllData();
-      renderMechanicView();
-    } else {
-      await loadAllData();
-      renderCustomerView(code);
-    }
-  });
+  document.getElementById('code-form')
+    .addEventListener('submit', async e => {
+      e.preventDefault();
+      const code = document.getElementById('access-code').value.trim();
+      if (!code) {
+        document.getElementById('code-error-msg').classList.remove('hidden');
+        return;
+      }
+      if (code === MECHANIC_CODE) {
+        await loadAllData();
+        renderMechanicView();
+      } else {
+        await loadAllData();
+        renderCustomerView(code);
+      }
+    });
 }
 
 /*** 10. STARTUP ***/
 document.addEventListener('DOMContentLoaded', async () => {
+  // Show the single access‑code entry immediately
   showCodeEntry();
 });

@@ -13,13 +13,13 @@
     <!-- App styles -->
     <link rel="stylesheet" href="style.css">
 
-    <!-- Supabase JS SDK -->
+    <!-- Supabase JS SDK (must be before app.js) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <main>
         <div id="app-container">
-            <!-- Login / Auth Screen (single access‑code entry) -->
+            <!-- Login / Access‑code screen -->
             <section id="view-login" class="view active">
                 <div class="code-entry-box reveal anim-up">
                     <h2>Wprowadź kod</h2>
@@ -35,15 +35,11 @@
                 </div>
             </section>
 
-            <!-- Customer View (will be filled by JS) -->
-            <section id="view-customer" class="view hidden">
-                <!-- Content injected by app.js -->
-            </section>
+            <!-- Customer view (filled by JS) -->
+            <section id="view-customer" class="view hidden"></section>
 
-            <!-- Mechanic View (will be filled by JS) -->
-            <section id="view-mechanic" class="view hidden">
-                <!-- Content injected by app.js -->
-            </section>
+            <!-- Mechanic view (filled by JS) -->
+            <section id="view-mechanic" class="view hidden"></section>
         </div>
     </main>
 

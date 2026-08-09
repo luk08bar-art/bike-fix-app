@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel BikeFix Mobile</title>
+    <!-- Czcionki z Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+:root {
+    --bg: #0c0c0c;
+    --bg-alt: #151515;
+    --bg-card: #1a1a1a;
+    --accent: #15ff00;
+    --accent-hover: #38ff25;
+    --red: #ff3333;
+    --white: #ffffff;
+    --text: #e8e8e8;
+    --text-muted: #999;
+    --border: rgba(255, 255, 255, 0.12);
+    --font-display: "Bebas Neue", system-ui, -apple-system, sans-serif;
+    --font-body: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    color: var(--white);
+    line-height: 1.05;
+}
+
+h2 {
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+}
+
+h3 {
+    font-size: 1.3rem;
+}
+
+p {
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+.sub-text {
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+}
+
+.accent-text {
+    color: var(--accent);
+}
+
+.live-badge {
+    background: rgba(255, 51, 51, 0.12);
+    border: 1px solid rgba(255, 85, 85, 0.35);
+    color: #ff6666;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.75rem;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.view {
+    min-height: 100vh;
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.section-tag {
+    font-family: var(--font-display);
+    letter-spacing: .3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--accent);
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    font-size: .8rem;
+    display: inline-block;
+}
+
+.reveal {
+    opacity: 1 !important;
+    transform: none !important;
+}
+
+.btn {
+    font-family: var(--font-display);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: .95rem 1.8rem;
+    font-size: 1rem;
+    transition: all .25s;
+    border: none;
+    outline: none;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    border-radius: 6px;
+}
+
+.btn--primary {
+    background: var(--accent);
+    color: #000;
+    border: 2px solid var(--accent);
+    font-weight: bold;
+}
+
+.btn--outline {
+    color: var(--white);
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn--small {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+}
+
+.quick-services {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.quick-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+#view-login {
+    justify-content: center;
+    background: #0a0a0a;
+}
+
+.login-box {
+    background: #141414;
+    border: 1px solid rgba(21, 255, 0, 0.35);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 20px rgba(21, 255, 0, 0.15);
+    padding: 2.5rem 1.5rem;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    border-radius: 12px;
+}
+
+.logo {
+    font-family: var(--font-display);
+    letter-spacing: .05em;
+    color: var(--white);
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 1.5rem;
+}
+
+.logo span, .logo-small span {
+    color: var(--accent);
+}
+
+.input-group {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+input[type="text"], input[type="number"] {
+    width: 100%;
+    background: #1c1c1c;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--white);
+    padding: 0.9rem 1.1rem;
+    font-size: 1rem;
+    font-family: var(--font-body);
+    outline: none;
+    border-radius: 6px;
+}
+
+input[type="text"]:focus, input[type="number"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 8px rgba(21, 255, 0, 0.3);
+}
+
+.error-msg {
+    color: #ff3333;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+.header-bar {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.logo-small {
+    font-family: var(--font-display);
+    letter-spacing: .05em;
+    color: var(--white);
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.badge-admin {
+    background: var(--accent);
+    color: #000;
+    font-size: 0.65rem;
+    padding: 0.2rem 0.5rem;
+    font-weight: bold;
+    border-radius: 3px;
+}
+
+.btn-logout {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.dashboard-content {
+    width: 100%;
+    max-width: 800px;
+}
+
+.status-card {
+    background: #181818;
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid var(--accent);
+    border-radius: 8px;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    background-color: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent);
+}
+
+.status-desc {
+    color: var(--text);
+    line-height: 1.6;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    background: #161616;
+    padding: 1.2rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.detail-label {
+    font-family: var(--font-display);
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    font-size: 0.8rem;
+}
+
+.detail-value {
+    color: var(--white);
+    font-weight: 500;
+}
+
+.task-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.task-item {
+    background: #181818;
+    border: 1px solid var(--border);
+    padding: 0.9rem 1.2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 6px;
+}
+
+.task-item.done {
+    border-color: rgba(21, 255, 0, 0.3);
+    background: rgba(21, 255, 0, 0.04);
+}
+
+.task-info {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.task-name {
+    font-size: 0.95rem;
+    color: var(--white);
+}
+
+.task-price {
+    font-family: var(--font-display);
+    color: var(--accent);
+    font-size: 1.2rem;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+
+.switch input { opacity: 0; width: 0; height: 0; }
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: var(--red);
+  transition: .3s;
+  border-radius: 26px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px; width: 18px;
+  left: 4px; bottom: 4px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider { background-color: var(--accent); }
+input:checked + .slider:before { transform: translateX(24px); }
+
+.mechanic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.2rem;
+}
+
+.order-card {
+    background: #181818;
+    border: 1px solid var(--border);
+    padding: 1.2rem;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.order-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.8rem;
+}
+
+.order-status {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    font-weight: 600;
+    border-radius: 4px;
+}
+
+.badge-progress {
+    background: rgba(21, 255, 0, 0.15);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+}
+
+.badge-done {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--white);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.new-order {
+    justify-content: center;
+    align-items: center;
+    border: 1px dashed var(--accent);
+    background: rgba(21, 255, 0, 0.02);
+    cursor: pointer;
+    min-height: 180px;
+}
+
+.add-icon {
+    font-size: 2.5rem;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+}
+
+.modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem 1rem;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.modal-content {
+    background: #161616;
+    border: 1px solid var(--border);
+    padding: 2rem 1.2rem;
+    width: 100%;
+    max-width: 600px;
+    position: relative;
+    border-radius: 12px;
+}
+
+.close-modal {
+    position: absolute;
+    top: 0.8rem; right: 1.2rem;
+    font-size: 2rem;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.mechanic-tabs {
+    display: flex;
+    gap: 0.5rem;
+    background: #111;
+    padding: 0.3rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    width: 100%;
+}
+
+.tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.tab-btn.active {
+    background: #222;
+    color: var(--accent);
+    border: 1px solid rgba(21, 255, 0, 0.3);
+}
+
+/* FIXIK AI WIDGET */
+.fixik-speech-bubble {
+    background: #181818;
+    border: 2px solid #15ff00;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+    border-radius: 14px;
+    padding: 8px 12px;
+    color: #fff;
+    font-size: 12px;
+    max-width: 240px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.fixik-speech-close {
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.fixik-character-fab {
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer;
+}
+
+.fixik-character-img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 3px solid #15ff00;
+    box-shadow: 0 0 20px rgba(21, 255, 0, 0.6);
+    object-fit: cover;
+    background: #111;
+}
+
+.fixik-window {
+    position: absolute;
+    bottom: 60px; right: 0;
+    width: 350px;
+    max-width: calc(100vw - 20px);
+    height: 480px;
+    max-height: calc(100vh - 100px);
+    background: #141414;
+    color: #fff;
+    border: 1px solid rgba(21, 255, 0, 0.4);
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+    display: flex;
+    flex-direction: column;
+    font-family: system-ui, sans-serif;
+    overflow: hidden;
+}
+
+.fixik-header {
+    background: #1e1e1e;
+    padding: 12px;
+    border-bottom: 1px solid #2a2a2a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.fixik-body {
+    flex: 1;
+    padding: 12px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 13px;
+    background: #0d0d0d;
+}
+
+.fixik-msg {
+    max-width: 90%;
+    padding: 10px 12px;
+    border-radius: 12px;
+    word-wrap: break-word;
+}
+.fixik-msg--bot {
+    align-self: flex-start;
+    background: #1f1f1f;
+    border: 1px solid #333;
+    color: #e0e0e0;
+}
+.fixik-msg--user {
+    align-self: flex-end;
+    background: #15ff00;
+    color: #000;
+    font-weight: bold;
+}
+
+.fixik-chips {
+    padding: 8px;
+    background: #141414;
+    border-top: 1px solid #222;
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+}
+.fixik-chip {
+    background: #222;
+    border: 1px solid #444;
+    color: #ddd;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 16px;
+    white-space: nowrap;
+}
+
+.fixik-footer {
+    padding: 10px;
+    background: #1a1a1a;
+    display: flex;
+    gap: 6px;
+}
+.fixik-footer input {
+    flex: 1;
+    background: #0a0a0a;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 18px;
+    font-size: 13px;
+}
+.fixik-footer button {
+    background: #15ff00;
+    border: none;
+    color: #000;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-weight: bold;
+}
+    </style>
+</head>
+<body>
+    <main>
+        <div id="app-container">
+            
+            <!-- Ekran Logowania -->
+            <section id="view-login" class="view">
+                <div class="login-box">
+                    <div class="logo">Bike<span>Fix</span></div>
+                    <h2>Status Zlecenia</h2>
+                    <p class="sub-text">Wpisz swój unikalny kod zlecenia</p>
+                    <form id="login-form">
+                        <div class="input-group">
+                            <input type="text" id="access-code" placeholder="Wprowadź kod zlecenia (np. TOMEK123)" autocomplete="off" required>
+                        </div>
+                        <p id="error-msg" class="error-msg hidden">Nieprawidłowy kod zlecenia. Spróbuj ponownie.</p>
+                        <button type="submit" class="btn btn--primary" id="btn-submit-login">Sprawdź status</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Widok Klienta -->
+            <section id="view-customer" class="view hidden">
+                <div class="header-bar">
+                    <div class="logo-small">Bike<span>Fix</span></div>
+                    <button class="btn-logout" onclick="logout()">Wyloguj</button>
+                </div>
+                <div class="dashboard-content">
+                    <span class="section-tag">Status naprawy</span>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
+                        <h2 style="margin-bottom:0;">Twoje zlecenie: <span class="accent-text" id="customer-order-id">#---</span></h2>
+                        <span class="live-badge">● Na żywo</span>
+                    </div>
+                    
+                    <div class="status-card">
+                        <div class="status-indicator">
+                            <div class="dot" id="customer-status-dot"></div>
+                            <h3 id="customer-status-text">W trakcie diagnozy</h3>
+                        </div>
+                        <p class="status-desc" id="customer-status-desc">Nasz serwisant Łukasz pracuje nad Twoim rowerem.</p>
+                        
+                        <div style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.8rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; font-size: 0.85rem;">
+                                <span style="color: var(--text-muted);">Postęp naprawy: <strong style="color: var(--accent);" id="customer-progress-percent">0%</strong></span>
+                                <span style="color: var(--text-muted);" id="customer-progress-count">0 / 0 usług</span>
+                            </div>
+                            <div style="width: 100%; background: #111; height: 10px; border-radius: 5px; overflow: hidden; border: 1px solid var(--border);">
+                                <div id="customer-progress-bar" style="width: 0%; height: 100%; background: #15ff00; transition: width 0.4s ease; border-radius: 5px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="details-grid" style="margin-bottom: 1.5rem;">
+                        <div class="detail-item">
+                            <span class="detail-label">Rower</span>
+                            <span class="detail-value" id="customer-bike">---</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Data przyjęcia</span>
+                            <span class="detail-value" id="customer-date">---</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Do zapłaty</span>
+                            <span class="detail-value accent-text" style="font-size: 1.4rem;" id="customer-total-price">0 zł</span>
+                        </div>
+                    </div>
+
+                    <span class="section-tag">Lista zadań</span>
+                    <div class="task-list-container" id="customer-task-list">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Widok Serwisanta -->
+            <section id="view-mechanic" class="view hidden">
+                <div class="header-bar">
+                    <div class="logo-small">Bike<span>Fix</span> <span class="badge-admin">SERWIS</span></div>
+                    <button class="btn-logout" onclick="logout()">Wyloguj</button>
+                </div>
+                <div class="dashboard-content">
+                    <span class="section-tag">Panel zarządzania</span>
+                    <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem;">
+                        <h2 style="margin: 0;">Zlecenia</h2>
+                        <div class="mechanic-tabs">
+                            <button type="button" id="tab-active" class="tab-btn active" onclick="switchMechanicTab('active')">Aktywne</button>
+                            <button type="button" id="tab-archive" class="tab-btn" onclick="switchMechanicTab('archive')">Zakończone</button>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 1.2rem;">
+                        <input type="text" id="main-search-input" placeholder="Wyszukaj zlecenie (kod, imię, rower)..." oninput="renderMechanicOrders()" style="width: 100%;">
+                    </div>
+
+                    <div id="archive-summary-box" class="hidden" style="margin-bottom: 1.2rem; background: #161616; border: 1px solid var(--border); padding: 1rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Zakończonych zleceń</span>
+                            <span style="font-weight: bold; font-size: 1.1rem; color: var(--white);"><span style="color: var(--accent);" id="archive-count">0</span></span>
+                        </div>
+                        <div>
+                            <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Łączny przychód</span>
+                            <span style="font-weight: bold; font-size: 1.3rem; color: var(--accent);" id="archive-total-revenue">0 zł</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mechanic-grid" id="mechanic-orders-grid">
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Modale -->
+    <div id="modal-add-order" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModals()">&times;</span>
+            <span class="section-tag">Nowe zlecenie</span>
+            <h2>Wprowadź dane roweru</h2>
+            
+            <form id="form-add-order">
+                <div class="input-group">
+                    <label class="detail-label">Imię / Nazwa klienta</label>
+                    <input type="text" id="new-client-name" placeholder="np. Jan Kowalski" required>
+                </div>
+                <div class="input-group">
+                    <label class="detail-label">Model roweru</label>
+                    <input type="text" id="new-bike-model" placeholder="np. Trek Remedy 8" required>
+                </div>
+                <div class="input-group">
+                    <label class="detail-label">Telefon klienta (opcjonalnie)</label>
+                    <input type="text" id="new-client-phone" placeholder="np. 534 387 376">
+                </div>
+                <div class="input-group">
+                    <label class="detail-label">Kod dostępu dla klienta</label>
+                    <div style="display:flex; gap: 0.5rem;">
+                        <input type="text" id="new-client-code" placeholder="np. TOMEK123" required>
+                        <button type="button" class="btn btn--outline btn--small" style="width: auto; white-space: nowrap;" onclick="generateCode()">Losuj</button>
+                    </div>
+                </div>
+
+                <div class="tasks-builder">
+                    <h3 style="margin: 1.2rem 0 0.8rem;">Lista prac do wykonania</h3>
+                    <div style="margin-bottom: 0.8rem;">
+                        <div class="quick-services">
+                            <button type="button" class="quick-btn" onclick="addQuickService('Przegląd generalny', 65)">+ Przegląd (65zł)</button>
+                            <button type="button" class="quick-btn" onclick="addQuickService('Wymiana dętki', 25)">+ Dętka (25zł)</button>
+                        </div>
+                    </div>
+                    <div id="new-tasks-container"></div>
+                    <div class="add-task-row">
+                        <input type="text" id="new-task-name" placeholder="Inna usługa...">
+                        <input type="number" id="new-task-price" placeholder="Cena" style="width: 90px;">
+                        <button type="button" class="btn btn--outline btn--small" style="width: auto;" onclick="addTaskToNewOrder()">Dodaj</button>
+                    </div>
+                    <div style="text-align: right; margin-top: 0.8rem; border-top: 1px solid var(--border); padding-top: 0.8rem;">
+                        <h3>Suma: <span class="accent-text" id="new-order-total">0</span> zł</h3>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn--primary" style="margin-top: 1.5rem;">Zapisz Zlecenie</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-manage-order" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModals()">&times;</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                <span class="section-tag">Edycja Zlecenia</span>
+                <span class="badge-progress" id="manage-order-status">Diagnoza</span>
+            </div>
+            
+            <div style="background: #111; padding: 0.8rem; border-radius: 6px; border: 1px solid var(--border);">
+                <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                    <div class="input-group" style="margin:0;">
+                        <label class="detail-label">1. Kod zlecenia</label>
+                        <div style="display:flex; gap:0.4rem;">
+                            <input type="text" id="manage-client-code" placeholder="Kod..." oninput="updateTempOrderDetails()">
+                            <button type="button" class="btn btn--outline btn--small" style="width: auto;" onclick="generateManageCode()">Losuj</button>
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin:0;">
+                        <label class="detail-label">2. Imię klienta</label>
+                        <input type="text" id="manage-client-name" placeholder="Imię..." oninput="updateTempOrderDetails()">
+                    </div>
+                    <div class="input-group" style="margin:0;">
+                        <label class="detail-label">3. Model roweru</label>
+                        <input type="text" id="manage-bike-model" placeholder="Model..." oninput="updateTempOrderDetails()">
+                    </div>
+                    <div class="input-group" style="margin:0;">
+                        <label class="detail-label">4. Telefon klienta</label>
+                        <input type="text" id="manage-client-phone" placeholder="Telefon..." oninput="updateTempOrderDetails()">
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 1rem;">
+                <h3 style="margin-bottom: 0.8rem;">Lista prac (Zaznacz suwak)</h3>
+                <div id="manage-tasks-container" class="task-list-container"></div>
+                <div style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.8rem;">
+                    <div class="add-task-row">
+                        <input type="text" id="add-task-name" placeholder="Dodatkowa usługa...">
+                        <input type="number" id="add-task-price" placeholder="Cena" style="width: 90px;">
+                        <button type="button" class="btn btn--outline btn--small" style="width: auto;" onclick="addTaskToExistingOrder()">Dodaj</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap: 0.8rem; margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 0.8rem;">
+                <div style="display:flex; justify-content: space-between; align-items:center;">
+                    <label class="detail-label" style="margin:0; font-size: 1rem; color: var(--white);">Cena końcowa (zł):</label>
+                    <input type="number" id="manage-total-price-input" style="width: 100px; text-align: right; font-size: 1.3rem; color: var(--accent);" onchange="updateCustomPrice()">
+                </div>
+                <button type="button" class="btn btn--primary" style="margin-top: 0.5rem;" onclick="saveManageOrder()">Zapisz Zmiany</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WIDGET FIXIK AI -->
+    <div id="fixik-draggable-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 99999; display: flex; flex-direction: column; align-items: flex-end;">
+        
+        <div id="fixik-speech-bubble" class="fixik-speech-bubble">
+            <span id="fixik-speech-text">Jestem Fixik! Służę pomocą 🔧</span>
+            <button type="button" class="fixik-speech-close" onclick="closeFixikSpeechBubble(event)">✕</button>
+        </div>
+
+        <button id="fixik-fab-btn" class="fixik-fab fixik-character-fab" onclick="toggleFixikWindow()">
+            <div class="fixik-character-wrapper">
+                <img src="fixik.jpg" alt="Fixik AI Mascot" class="fixik-character-img" onerror="this.style.display='none';">
+            </div>
+        </button>
+
+        <div id="fixik-window" class="fixik-window hidden">
+            <div class="fixik-header">
+                <strong style="font-size:14px; color:#15ff00;">Fixik AI – Pomocnik Serwisu</strong>
+                <button type="button" class="fixik-close" onclick="toggleFixikWindow(false)">✕</button>
+            </div>
+
+            <div class="fixik-body" id="fixik-messages">
+                <div class="fixik-msg fixik-msg--bot">
+                    Uszanowanie! 👋 Jestem <strong>Fixik 🤖</strong> – asystent serwisu <strong>bikefix</strong>! 🚴‍♂️<br><br>
+                    Polecam nasz <strong>Przegląd ogólny za 65 zł</strong> z myciem roweru i darmowym dojazdem!
+                </div>
+            </div>
+
+            <div class="fixik-chips">
+                <button type="button" class="fixik-chip" onclick="sendFixikChip('Co wchodzi w przegląd i ile kosztuje?')">💰 Przegląd i cena</button>
+                <button type="button" class="fixik-chip" onclick="sendFixikChip('Jak działa panel klienta i kod?')">🔑 Jak działa panel?</button>
+            </div>
+
+            <div class="fixik-footer">
+                <input type="text" id="fixik-input" placeholder="Napisz do Fixika..." onkeypress="if(event.key==='Enter') sendFixikUserMsg()">
+                <button type="button" onclick="sendFixikUserMsg()">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGIKA JS -->
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    let orders = JSON.parse(localStorage.getItem('bikefix_orders')) || [];
+    
+    if (orders.length === 0) {
+        orders = [
+            {
+                id: 'ord_tomek',
+                clientCode: 'TOMEK123',
+                clientName: 'Tomek Kowalski',
+                bikeModel: 'Trek Marlin 7 (Górski 29")',
+                clientPhone: '+48 600 100 200',
+                date: new Date().toISOString().split('T')[0],
+                status: 'W trakcie',
+                tasks: [
+                    { name: 'Diagnoza napędu i hamulców', price: 50, done: true },
+                    { name: 'Wymiana łańcucha Shimano', price: 95, done: true },
+                    { name: 'Centrowanie koła 29"', price: 45, done: false }
+                ]
+            }
+        ];
+        localStorage.setItem('bikefix_orders', JSON.stringify(orders));
+    }
+
+    const MECHANIC_CODE = 'nowostandardowy19.18wis';
+    let currentEditingOrderId = null;
+    let newOrderTasks = []; 
+    let tempOrder = null; 
+    let activeCustomerOrderCode = null;
+    let isMechanicView = false;
+    let currentMechanicTab = 'active';
+
+    const loginForm = document.getElementById('login-form');
+    const accessCodeInput = document.getElementById('access-code');
+    const errorMsg = document.getElementById('error-msg');
+    
+    const viewLogin = document.getElementById('view-login');
+    const viewCustomer = document.getElementById('view-customer');
+    const viewMechanic = document.getElementById('view-mechanic');
+
+    const modalAddOrder = document.getElementById('modal-add-order');
+    const modalManageOrder = document.getElementById('modal-manage-order');
+    const formAddOrder = document.getElementById('form-add-order');
+
+    function generateSecureCode() {
+        const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+        let sampleCode = '';
+        for (let i = 0; i < 6; i++) {
+            sampleCode += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return sampleCode;
+    }
+
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const code = accessCodeInput.value.trim();
+        
+        if (code.toUpperCase() === MECHANIC_CODE.toUpperCase()) {
+            hideAllViews();
+            isMechanicView = true;
+            renderMechanicOrders();
+            viewMechanic.classList.remove('hidden');
+        } else {
+            const order = orders.find(o => o.clientCode.toUpperCase() === code.toUpperCase());
+            if (order) {
+                hideAllViews();
+                activeCustomerOrderCode = order.clientCode;
+                renderCustomerView(order);
+                viewCustomer.classList.remove('hidden');
+            } else {
+                showError();
+            }
+        }
+    });
+
+    function showError() {
+        errorMsg.classList.remove('hidden');
+        setTimeout(() => { errorMsg.classList.add('hidden'); }, 3000);
+    }
+
+    function hideAllViews() {
+        viewLogin.classList.add('hidden');
+        viewCustomer.classList.add('hidden');
+        viewMechanic.classList.add('hidden');
+        errorMsg.classList.add('hidden');
+        activeCustomerOrderCode = null;
+        isMechanicView = false;
+    }
+
+    window.logout = function() {
+        hideAllViews();
+        viewLogin.classList.remove('hidden');
+    };
+
+    window.closeModals = function() {
+        modalAddOrder.classList.add('hidden');
+        modalManageOrder.classList.add('hidden');
+        tempOrder = null; 
+    };
+
+    function saveOrders() {
+        localStorage.setItem('bikefix_orders', JSON.stringify(orders));
+    }
+
+    function renderCustomerView(order) {
+        document.getElementById('customer-order-id').innerText = order.clientCode;
+        document.getElementById('customer-bike').innerText = order.bikeModel;
+        document.getElementById('customer-date').innerText = order.date;
+        
+        const allDone = order.tasks.length > 0 && order.tasks.every(t => t.done);
+        const customerStatusDot = document.getElementById('customer-status-dot');
+        const customerStatusText = document.getElementById('customer-status-text');
+
+        if (allDone || order.status === 'Gotowe') {
+            customerStatusText.innerText = 'Rower gotowy do odbioru!';
+        } else {
+            customerStatusText.innerText = 'W trakcie naprawy';
+        }
+
+        const totalTasks = order.tasks ? order.tasks.length : 0;
+        const doneTasks = order.tasks ? order.tasks.filter(t => t.done).length : 0;
+        const percent = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+
+        document.getElementById('customer-progress-percent').innerText = `${percent}%`;
+        document.getElementById('customer-progress-count').innerText = `${doneTasks} z ${totalTasks} usług`;
+        document.getElementById('customer-progress-bar').style.width = `${percent}%`;
+
+        const taskListContainer = document.getElementById('customer-task-list');
+        taskListContainer.innerHTML = '';
+
+        order.tasks.forEach(task => {
+            const taskEl = document.createElement('div');
+            taskEl.className = `task-item ${task.done ? 'done' : ''}`;
+            taskEl.innerHTML = `
+                <div class="task-info">
+                    <span class="task-name">${task.done ? '✓ ' : '○ '}${task.name}</span>
+                </div>
+                <span class="task-price">${task.price} zł</span>
+            `;
+            taskListContainer.appendChild(taskEl);
+        });
+        
+        let calculatedSum = order.tasks.reduce((sum, t) => sum + Number(t.price), 0);
+        let displayPrice = order.customPrice !== undefined ? order.customPrice : calculatedSum;
+        document.getElementById('customer-total-price').innerText = `${displayPrice} zł`;
+    }
+
+    window.switchMechanicTab = function(tab) {
+        currentMechanicTab = tab;
+        document.getElementById('tab-active').classList.toggle('active', tab === 'active');
+        document.getElementById('tab-archive').classList.toggle('active', tab === 'archive');
+        renderMechanicOrders();
+    };
+
+    window.renderMechanicOrders = function() {
+        const grid = document.getElementById('mechanic-orders-grid');
+        grid.innerHTML = '';
+        const searchInput = document.getElementById('main-search-input');
+        const searchVal = searchInput ? searchInput.value.toUpperCase().trim() : '';
+
+        let filteredOrders = orders.filter(order => {
+            const matchesTab = currentMechanicTab === 'active' ? order.status !== 'Odebrane' : order.status === 'Odebrane';
+            if (!matchesTab) return false;
+            if (searchVal) {
+                return (order.clientCode || '').toUpperCase().includes(searchVal) ||
+                       (order.clientName || '').toUpperCase().includes(searchVal) ||
+                       (order.bikeModel || '').toUpperCase().includes(searchVal);
+            }
+            return true;
+        });
+
+        const archiveSummaryBox = document.getElementById('archive-summary-box');
+        if (currentMechanicTab === 'archive') {
+            const totalRevenue = filteredOrders.reduce((sum, o) => {
+                let calcSum = o.tasks ? o.tasks.reduce((s, t) => s + Number(t.price), 0) : 0;
+                return sum + (o.customPrice !== undefined ? Number(o.customPrice) : calcSum);
+            }, 0);
+            if (archiveSummaryBox) {
+                archiveSummaryBox.classList.remove('hidden');
+                document.getElementById('archive-count').innerText = filteredOrders.length;
+                document.getElementById('archive-total-revenue').innerText = `${totalRevenue} zł`;
+            }
+        } else {
+            if (archiveSummaryBox) archiveSummaryBox.classList.add('hidden');
+        }
+
+        filteredOrders.forEach((order, idx) => {
+            let badgeClass = (order.status === 'Gotowe' || order.status === 'Odebrane') ? 'badge-done' : 'badge-progress';
+            let calculatedSum = order.tasks ? order.tasks.reduce((sum, t) => sum + Number(t.price), 0) : 0;
+            let displayPrice = order.customPrice !== undefined ? order.customPrice : calculatedSum;
+            
+            let actionHtml = `<button class="btn btn--outline btn--small" onclick="openManageOrder('${order.id}')">Zarządzaj / Edytuj</button>`;
+            if (order.status === 'Gotowe') {
+                actionHtml += `<button class="btn btn--primary btn--small" style="margin-top: 0.5rem;" onclick="markOrderPickedUp(event, '${order.id}')">Rower Wydany</button>`;
+            }
+
+            let tasksPreviewHtml = '';
+            if (order.tasks && order.tasks.length > 0) {
+                tasksPreviewHtml = `<div style="margin: 0.6rem 0; display: flex; flex-direction: column; gap: 0.3rem;">`;
+                order.tasks.forEach((task, tIdx) => {
+                    tasksPreviewHtml += `
+                        <div onclick="toggleTaskFromCard(event, '${order.id}', ${tIdx})" style="display: flex; justify-content: space-between; font-size: 0.85rem; padding: 0.3rem 0.5rem; background: #222; border-radius: 4px; cursor: pointer;">
+                            <span style="color: #fff;">${task.name}</span>
+                            <span style="color: ${task.done ? '#15ff00' : '#ff3333'}; font-weight: bold;">${task.done ? 'ZROBIONE' : 'DO ZROBIENIA'}</span>
+                        </div>
+                    `;
+                });
+                tasksPreviewHtml += `</div>`;
+            }
+
+            const card = document.createElement('div');
+            card.className = 'order-card';
+            card.innerHTML = `
+                <div class="order-head">
+                    <span class="order-status ${badgeClass}">${order.status}</span>
+                    <span style="font-weight: bold; color: var(--accent);">${displayPrice} zł</span>
+                </div>
+                <div style="margin-bottom: 0.6rem;">
+                    <div style="font-family: var(--font-display); font-size: 1.3rem; color: #fff;">Kod: ${order.clientCode}</div>
+                    <div style="color: #ccc; font-weight: 500;">${order.bikeModel} (${order.clientName})</div>
+                    <div style="color: #888; font-size: 0.85rem;">Tel: ${order.phone || order.clientPhone || 'Brak'}</div>
+                </div>
+                ${tasksPreviewHtml}
+                <div style="display:flex; flex-direction:column; gap:0.3rem; margin-top: auto;">${actionHtml}</div>
+            `;
+            grid.appendChild(card);
+        });
+
+        if (currentMechanicTab === 'active') {
+            const addNewCard = document.createElement('div');
+            addNewCard.className = 'order-card new-order';
+            addNewCard.onclick = openAddOrderModal;
+            addNewCard.innerHTML = `<div class="add-icon">+</div><h3>Dodaj nowe zlecenie</h3>`;
+            grid.appendChild(addNewCard);
+        }
+    };
+
+    window.markOrderPickedUp = function(event, orderId) {
+        event.stopPropagation();
+        const order = orders.find(o => o.id === orderId);
+        if (order) {
+            order.status = 'Odebrane';
+            saveOrders();
+            renderMechanicOrders();
+        }
+    };
+
+    window.toggleTaskFromCard = function(event, orderId, taskIndex) {
+        event.stopPropagation();
+        const order = orders.find(o => o.id === orderId);
+        if (order && order.tasks[taskIndex]) {
+            order.tasks[taskIndex].done = !order.tasks[taskIndex].done;
+            const allDone = order.tasks.length > 0 && order.tasks.every(t => t.done);
+            if (allDone && order.status !== 'Odebrane') order.status = 'Gotowe';
+            else if (!allDone && (order.status === 'Gotowe' || order.status === 'Odebrane')) order.status = 'W trakcie';
+            saveOrders();
+            renderMechanicOrders();
+        }
+    };
+
+    function openAddOrderModal() {
+        newOrderTasks = [];
+        document.getElementById('form-add-order').reset();
+        document.getElementById('new-order-total').innerText = '0';
+        renderNewOrderTasks();
+        modalAddOrder.classList.remove('hidden');
+    }
+
+    window.generateCode = function() {
+        document.getElementById('new-client-code').value = generateSecureCode();
+    };
+
+    window.generateManageCode = function() {
+        document.getElementById('manage-client-code').value = generateSecureCode();
+        updateTempOrderDetails();
+    };
+    
+    window.addQuickService = function(name, price) {
+        document.getElementById('new-task-name').value = name;
+        document.getElementById('new-task-price').value = price;
+        addTaskToNewOrder();
+    };
+
+    window.addTaskToNewOrder = function() {
+        const name = document.getElementById('new-task-name').value;
+        const price = document.getElementById('new-task-price').value;
+
+        if (name && price) {
+            newOrderTasks.push({ name, price: Number(price), done: false });
+            document.getElementById('new-task-name').value = '';
+            document.getElementById('new-task-price').value = '';
+            renderNewOrderTasks();
+        }
+    };
+
+    function renderNewOrderTasks() {
+        const container = document.getElementById('new-tasks-container');
+        container.innerHTML = '';
+        let total = 0;
+        newOrderTasks.forEach((task, index) => {
+            total += Number(task.price);
+            const line = document.createElement('div');
+            line.style.display = 'flex';
+            line.style.justifyContent = 'space-between';
+            line.style.margin = '0.3rem 0';
+            line.innerHTML = `<span>${task.name} - ${task.price} zł</span>`;
+            container.appendChild(line);
+        });
+        document.getElementById('new-order-total').innerText = total;
+    }
+
+    formAddOrder.addEventListener('submit', (e) => {
+        e.preventDefault();
+        let calculatedSum = newOrderTasks.reduce((sum, t) => sum + Number(t.price), 0);
+        const newOrder = {
+            id: Date.now().toString(),
+            clientName: document.getElementById('new-client-name').value || 'Brak imienia',
+            bikeModel: document.getElementById('new-bike-model').value,
+            phone: document.getElementById('new-client-phone').value,
+            clientCode: document.getElementById('new-client-code').value.toUpperCase(),
+            date: new Date().toLocaleDateString('pl-PL'),
+            status: calculatedSum > 0 ? (newOrderTasks.every(t => t.done) ? 'Gotowe' : 'W trakcie') : 'Diagnoza',
+            tasks: [...newOrderTasks],
+            customPrice: calculatedSum
+        };
+        orders.push(newOrder);
+        saveOrders();
+        closeModals();
+        renderMechanicOrders();
+    });
+
+    window.openManageOrder = function(orderId) {
+        currentEditingOrderId = orderId;
+        const originalOrder = orders.find(o => o.id === orderId);
+        if (!originalOrder) return;
+        tempOrder = JSON.parse(JSON.stringify(originalOrder));
+
+        document.getElementById('manage-client-code').value = tempOrder.clientCode || '';
+        document.getElementById('manage-client-name').value = tempOrder.clientName || '';
+        document.getElementById('manage-bike-model').value = tempOrder.bikeModel || '';
+        document.getElementById('manage-client-phone').value = tempOrder.phone || tempOrder.clientPhone || '';
+
+        renderManageTasks();
+        modalManageOrder.classList.remove('hidden');
+    };
+
+    window.updateTempOrderDetails = function() {
+        if (!tempOrder) return;
+        tempOrder.clientCode = document.getElementById('manage-client-code').value.trim().toUpperCase();
+        tempOrder.clientName = document.getElementById('manage-client-name').value.trim();
+        tempOrder.bikeModel = document.getElementById('manage-bike-model').value.trim();
+        tempOrder.phone = document.getElementById('manage-client-phone').value.trim();
+    };
+
+    function renderManageTasks() {
+        if (!tempOrder) return;
+        const container = document.getElementById('manage-tasks-container');
+        container.innerHTML = '';
+        let calculatedSum = 0;
+
+        tempOrder.tasks.forEach((task, index) => {
+            calculatedSum += Number(task.price);
+            const taskEl = document.createElement('div');
+            taskEl.className = `task-item ${task.done ? 'done' : ''}`;
+            taskEl.style.flexDirection = 'column';
+            taskEl.style.alignItems = 'stretch';
+            taskEl.innerHTML = `
+                <div style="display:flex; justify-content: space-between;">
+                    <span style="color:#fff;">${task.name}</span>
+                    <span style="color:var(--accent);">${task.price} zł</span>
+                </div>
+                <div style="display:flex; align-items: center; gap: 0.8rem; margin-top: 0.4rem;">
+                    <label class="switch">
+                        <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleTaskDone(${index})">
+                        <span class="slider"></span>
+                    </label>
+                    <span style="color: ${task.done ? '#15ff00' : '#ff3333'}; font-size: 0.85rem; font-weight: bold;">${task.done ? 'ZROBIONE' : 'DO ZROBIENIA'}</span>
+                </div>
+            `;
+            container.appendChild(taskEl);
+        });
+
+        if (tempOrder.customPrice === undefined) tempOrder.customPrice = calculatedSum;
+        document.getElementById('manage-total-price-input').value = tempOrder.customPrice;
+    }
+    
+    window.updateCustomPrice = function() {
+        if (tempOrder) tempOrder.customPrice = Number(document.getElementById('manage-total-price-input').value);
+    };
+
+    window.toggleTaskDone = function(taskIndex) {
+        if (tempOrder) {
+            tempOrder.tasks[taskIndex].done = !tempOrder.tasks[taskIndex].done;
+            renderManageTasks(); 
+        }
+    };
+
+    window.addTaskToExistingOrder = function() {
+        const name = document.getElementById('add-task-name').value;
+        const price = document.getElementById('add-task-price').value;
+        if (name && price && tempOrder) {
+            tempOrder.tasks.push({ name, price: Number(price), done: false });
+            if (tempOrder.customPrice !== undefined) tempOrder.customPrice += Number(price);
+            document.getElementById('add-task-name').value = '';
+            document.getElementById('add-task-price').value = '';
+            renderManageTasks();
+        }
+    };
+
+    window.saveManageOrder = function() {
+        if (!tempOrder) return;
+        updateTempOrderDetails();
+        const index = orders.findIndex(o => o.id === currentEditingOrderId);
+        if (index !== -1) {
+            const allDone = tempOrder.tasks.length > 0 && tempOrder.tasks.every(t => t.done);
+            if (tempOrder.status !== 'Odebrane') tempOrder.status = allDone ? 'Gotowe' : 'W trakcie';
+            orders[index] = tempOrder;
+            saveOrders();
+            renderMechanicOrders();
+            closeModals();
+        }
+    };
+
+    // FIXIK CHAT
+    window.closeFixikSpeechBubble = function(event) {
+        if (event) event.stopPropagation();
+        const bubble = document.getElementById('fixik-speech-bubble');
+        if (bubble) bubble.style.display = 'none';
+    };
+
+    window.toggleFixikWindow = function(show) {
+        const win = document.getElementById('fixik-window');
+        if (!win) return;
+        if (show === undefined) win.classList.toggle('hidden');
+        else if (show) win.classList.remove('hidden');
+        else win.classList.add('hidden');
+    };
+
+    window.sendFixikChip = function(text) {
+        const input = document.getElementById('fixik-input');
+        if (input) {
+            input.value = text;
+            sendFixikUserMsg();
+        }
+    };
+
+    window.sendFixikUserMsg = function() {
+        const input = document.getElementById('fixik-input');
+        if (!input) return;
+        const msg = input.value.trim();
+        if (!msg) return;
+        
+        const body = document.getElementById('fixik-messages');
+        if (!body) return;
+        
+        body.innerHTML += `<div class="fixik-msg fixik-msg--user">${msg}</div>`;
+        input.value = '';
+        body.scrollTop = body.scrollHeight;
+
+        setTimeout(() => {
+            body.innerHTML += `<div class="fixik-msg fixik-msg--bot">Uszanowanie, Szanowny Panie! 🤖 Zachęcam do skorzystania z naszego Przeglądu ogólnego za 65 zł! Dziękuję!</div>`;
+            body.scrollTop = body.scrollHeight;
+        }, 300);
+    };
+});
+    </script>
+</body>
+</html>

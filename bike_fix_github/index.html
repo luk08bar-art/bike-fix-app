@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel BikeFix</title>
+    <!-- Czcionki z Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main>
+        <!-- Kontener na dynamiczne widoki -->
+        <div id="app-container">
+            
+            <!-- Ekran Logowania -->
+            <section id="view-login" class="view active">
+                <div class="login-box reveal anim-up">
+                    <div class="logo">Bike<span>Fix</span></div>
+                    <h2>Status Zlecenia</h2>
+                    <p class="sub-text">Wpisz swój unikalny kod zlecenia</p>
+                    <form id="login-form">
+                        <div class="input-group">
+                            <input type="text" id="access-code" placeholder="Wprowadź kod zlecenia (np. TOMEK123)" autocomplete="off" required>
+                        </div>
+                        <p id="error-msg" class="error-msg hidden">Nieprawidłowy kod zlecenia. Spróbuj ponownie.</p>
+                        <button type="submit" class="btn btn--primary" id="btn-submit-login">Sprawdź status</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Widok Klienta -->
+            <section id="view-customer" class="view hidden">
+                <div class="header-bar reveal">
+                    <div class="logo-small">Bike<span>Fix</span></div>
+                    <button class="btn-logout" onclick="logout()">Wyloguj</button>
+                </div>
+                <div class="dashboard-content reveal" style="--d: 0.1s">
+                    <span class="section-tag">Status naprawy</span>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+                        <h2 style="margin-bottom:0;">Twoje zlecenie: <span class="accent-text" id="customer-order-id">#---</span></h2>
+                        <span class="live-badge" title="Dane aktualizują się na żywo!">● Na żywo</span>
+                    </div>
+                    
+                    <div class="status-card">
+                        <div class="status-indicator">
+                            <div class="dot pulse" id="customer-status-dot"></div>
+                            <h3 id="customer-status-text">W trakcie diagnozy</h3>
+                        </div>
+                        <p class="status-desc" id="customer-status-desc">Nasz serwisant Łukasz pracuje nad Twoim rowerem. Poniżej widzisz aktualny postęp prac.</p>
+                        
+                        <div class="progress-bar-container" style="margin-top: 1.2rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; font-size: 0.85rem;">
+                                <span style="color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Postęp naprawy: <strong style="color: var(--accent);" id="customer-progress-percent">0%</strong></span>
+                                <span style="color: var(--text-muted);" id="customer-progress-count">0 / 0 usług</span>
+                            </div>
+                            <div style="width: 100%; background: var(--bg-alt); height: 10px; border-radius: 5px; overflow: hidden; border: 1px solid var(--border);">
+                                <div id="customer-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #15ff00, #00b300); box-shadow: 0 0 10px rgba(21, 255, 0, 0.5); transition: width 0.5s ease-in-out; border-radius: 5px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="details-grid" style="margin-bottom: 2rem;">
+                        <div class="detail-item">
+                            <span class="detail-label">Rower</span>
+                            <span class="detail-value" id="customer-bike">---</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Data przyjęcia</span>
+                            <span class="detail-value" id="customer-date">---</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Do zapłaty</span>
+                            <span class="detail-value accent-text" style="font-size: 1.5rem;" id="customer-total-price">0 zł</span>
+                        </div>
+                    </div>
+
+                    <span class="section-tag">Lista zadań</span>
+                    <div class="task-list-container" id="customer-task-list">
+                        <!-- Dynamic Tasks for Customer -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Widok Serwisanta -->
+            <section id="view-mechanic" class="view hidden">
+                <div class="header-bar reveal">
+                    <div class="logo-small">Bike<span>Fix</span> <span class="badge-admin">SERWIS</span></div>
+                    <button class="btn-logout" onclick="logout()">Wyloguj</button>
+                </div>
+                <div class="dashboard-content reveal" style="--d: 0.1s">
+                    <span class="section-tag">Panel zarządzania</span>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+                        <h2 style="margin: 0;">Zlecenia</h2>
+                        <div class="mechanic-tabs">
+                            <button type="button" id="tab-active" class="tab-btn active" onclick="switchMechanicTab('active')">Aktywne</button>
+                            <button type="button" id="tab-archive" class="tab-btn" onclick="switchMechanicTab('archive')">Zakończone</button>
+                        </div>
+                    </div>
+
+                    <!-- Pasek wyszukiwania wielopola dla wszystkich zleceń -->
+                    <div style="margin-bottom: 1.5rem;">
+                        <input type="text" id="main-search-input" placeholder="Wyszukaj zlecenie (kod, imię, rower, telefon)..." oninput="renderMechanicOrders()" style="max-width: 450px; padding: 0.8rem 1.2rem;">
+                    </div>
+
+                    <!-- Podsumowanie dla archiwum (widoczne tylko w archiwum) -->
+                    <div id="archive-summary-box" class="hidden" style="margin-bottom: 1.5rem; background: var(--bg-alt); border: 1px solid var(--border); padding: 1.2rem 1.5rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 0.2rem;">Ewidencja rachunkowa</span>
+                            <span style="font-weight: bold; font-size: 1.1rem; color: var(--white);">Zakończonych zleceń: <span style="color: var(--accent);" id="archive-count">0</span></span>
+                        </div>
+                        <div>
+                            <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 0.2rem;">Łączny przychód w archiwum</span>
+                            <span style="font-weight: bold; font-size: 1.4rem; color: var(--accent);" id="archive-total-revenue">0 zł</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mechanic-grid" id="mechanic-orders-grid">
+                        <!-- Zlecenia będą ładowane dynamicznie z JS -->
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Modale dla Serwisanta -->
+    <!-- Modal Dodawania Zlecenia -->
+    <div id="modal-add-order" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModals()">&times;</span>
+            <span class="section-tag">Nowe zlecenie</span>
+            <h2>Wprowadź dane roweru</h2>
+            
+            <form id="form-add-order">
+                <div class="input-group">
+                    <label class="detail-label">Imię / Nazwa klienta</label>
+                    <input type="text" id="new-client-name" placeholder="np. Jan Kowalski" required>
+                </div>
+                <div class="input-group">
+                    <label class="detail-label">Model roweru</label>
+                    <input type="text" id="new-bike-model" placeholder="np. Trek Remedy 8" required>
+                </div>
+                <div class="input-group">
+                    <label class="detail-label">Telefon klienta (opcjonalnie)</label>
+                    <input type="text" id="new-client-phone" placeholder="np. 534 387 376">
+                </div>
+                <div class="input-group">
+                    <label class="detail-label">Wygeneruj kod dostępu dla klienta</label>
+                    <div style="display:flex; gap: 1rem;">
+                        <input type="text" id="new-client-code" placeholder="np. TOMEK123" required>
+                        <button type="button" class="btn btn--outline btn--small" style="width: auto;" onclick="generateCode()">Losuj kod</button>
+                    </div>
+                </div>
+
+                <div class="tasks-builder">
+                    <h3 style="margin: 1.5rem 0 1rem;">Lista prac do wykonania</h3>
+                    
+                    <!-- Szybkie Usługi -->
+                    <div style="margin-bottom: 1rem;">
+                        <span class="detail-label">Szybkie dodawanie:</span>
+                        <div class="quick-services">
+                            <button type="button" class="quick-btn" onclick="addQuickService('Przegląd generalny', 65)">+ Przegląd (65zł)</button>
+                            <button type="button" class="quick-btn" onclick="addQuickService('Wymiana dętki', 25)">+ Dętka (25zł)</button>
+                            <button type="button" class="quick-btn" onclick="addQuickService('Pełny Serwis', 199)">+ Pełny Serwis (199zł)</button>
+                            <button type="button" class="quick-btn" onclick="addQuickService('Regulacja przerzutki', 30)">+ Przerzutka (30zł)</button>
+                        </div>
+                    </div>
+
+                    <div id="new-tasks-container">
+                        <!-- Zestawy zadań do dodania -->
+                    </div>
+                    
+                    <div class="add-task-row">
+                        <input type="text" id="new-task-name" placeholder="Inna usługa...">
+                        <input type="number" id="new-task-price" placeholder="Cena (zł)" style="width: 100px;">
+                        <button type="button" class="btn btn--outline btn--small" style="width: auto;" onclick="addTaskToNewOrder()">Dodaj usługę</button>
+                    </div>
+
+                    <div style="text-align: right; margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                        <h3>Suma: <span class="accent-text" id="new-order-total">0</span> zł</h3>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn--primary" style="margin-top: 2rem;">Zapisz Zlecenie</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Zarządzania Zleceniem -->
+    <div id="modal-manage-order" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModals()">&times;</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <span class="section-tag">Edycja Zlecenia</span>
+                <span class="badge-progress" id="manage-order-status">Diagnoza</span>
+            </div>
+            
+            <!-- Edytowalne pola danych zlecenia -->
+            <div style="background: var(--bg-alt); padding: 1rem; border-radius: 8px; border: 1px solid var(--border); margin-top: 1rem;">
+                <span class="detail-label" style="display: block; margin-bottom: 0.8rem; color: var(--accent);">Dane Zlecenia (Edytowalne)</span>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div class="input-group" style="margin:0;">
+                        <label class="detail-label">1. Kod zlecenia</label>
+                        <div style="display:flex; gap:0.4rem;">
+                            <input type="text" id="manage-client-code" placeholder="Kod zlecenia..." oninput="updateTempOrderDetails()">
+                            <button type="button" class="btn btn--outline btn--small" style="width: auto; white-space: nowrap; padding: 0.4rem 0.8rem;" onclick="generateManageCode()">Losuj kod</button>
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin:0;">
+                        <label class="detail-label">2. Imię / Nazwa klienta</label>
+                        <input type="text" id="manage-client-name" placeholder="Imię klienta..." oninput="updateTempOrderDetails()">
+                    </div>
+                    <div class="input-group" style="margin:0;">
+                        <label class="detail-label">3. Model roweru</label>
+                        <input type="text" id="manage-bike-model" placeholder="Model roweru..." oninput="updateTempOrderDetails()">
+                    </div>
+                    <div class="input-group" style="margin:0;">
+                        <label class="detail-label">4. Telefon klienta</label>
+                        <input type="text" id="manage-client-phone" placeholder="Telefon..." oninput="updateTempOrderDetails()">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tasks-builder" style="margin-top: 1rem;">
+                <h3 style="margin: 1.5rem 0 1rem;">Lista prac (Kliknij suwak aby oznaczyć)</h3>
+                
+                <div id="manage-tasks-container" class="task-list-container">
+                    <!-- Dynamic Checklist for Mechanic (With Red/Green Toggles) -->
+                </div>
+                
+                <!-- Szybkie usługi dla istniejącego zamówienia -->
+                <div style="margin: 2rem 0; border-top: 1px solid var(--border); padding-top: 1rem;">
+                    <h3>Dodaj nową usługę w trakcie naprawy</h3>
+                    <div class="quick-services" style="margin-bottom: 1rem;">
+                        <button type="button" class="quick-btn" onclick="addExistingQuickService('Przegląd generalny', 65)">+ Przegląd (65zł)</button>
+                        <button type="button" class="quick-btn" onclick="addExistingQuickService('Wymiana dętki', 25)">+ Dętka (25zł)</button>
+                    </div>
+                    <div class="add-task-row" style="margin-top: 1rem;">
+                        <input type="text" id="add-task-name" placeholder="Inna usługa...">
+                        <input type="number" id="add-task-price" placeholder="Cena (zł)" style="width: 100px;">
+                        <button type="button" class="btn btn--outline btn--small" style="width: auto;" onclick="addTaskToExistingOrder()">Dodaj</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap: 1rem; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                <div style="display:flex; justify-content: space-between; align-items:center;">
+                    <label class="detail-label" style="margin:0; font-size: 1.1rem; color: var(--white);">Ręczna edycja ceny końcowej (zł):</label>
+                    <input type="number" id="manage-total-price-input" style="width: 120px; text-align: right; font-size: 1.5rem; color: var(--accent); font-family: var(--font-display); border-color: var(--accent);" onchange="updateCustomPrice()">
+                </div>
+                <div style="text-align: right;">
+                    <span class="detail-label">Kalkulowana suma usług: <span id="manage-calculated-sum">0</span> zł</span>
+                </div>
+                <button type="button" class="btn btn--primary" style="margin-top: 1rem;" onclick="saveManageOrder()">Zakończ edycję zlecenia i zapisz wszelkie zmiany</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+       WIDGET FIXIK AI - PRZESUWALNY POMOCNIK SERWISU ZIELONA GÓRA
+       ========================================================================== -->
+    <div id="fixik-draggable-container" style="position: fixed; bottom: 24px; right: 24px; z-index: 99999; touch-action: none; display: flex; flex-direction: column; align-items: flex-end;">
+        
+        <!-- 0. Pływający Dymek Wypowiedzi Fixika -->
+        <div id="fixik-speech-bubble" class="fixik-speech-bubble">
+            <span id="fixik-speech-text">Jestem Fixik! Służę pomocą w serwisie 🔧</span>
+            <button type="button" class="fixik-speech-close" onclick="closeFixikSpeechBubble(event)">✕</button>
+        </div>
+
+        <!-- 1. Pływająca Maskotka Fixika -->
+        <button id="fixik-fab-btn" class="fixik-fab fixik-character-fab" onclick="toggleFixikWindow()" title="Otwórz pomocnika serwisu (Przesuń w dowolne miejsce!)">
+            <div class="fixik-character-wrapper" id="fixik-avatar-wrapper">
+                <img src="fixik.jpg" alt="Fixik AI Mascot" class="fixik-character-img">
+                <span class="fixik-online-dot" title="Fixik jest aktywny!"></span>
+            </div>
+        </button>
+
+        <!-- 2. Okno Czatu Fixika -->
+        <div id="fixik-window" class="fixik-window hidden">
+            <div class="fixik-header">
+                <div class="fixik-header-title">
+                    <div class="fixik-avatar">
+                        <img src="fixik.jpg" alt="Fixik AI" style="width: 100%; height: 100%; object-fit: cover; object-position: center top; border-radius: 50%;">
+                    </div>
+                    <div>
+                        <strong style="font-size:14px;">Fixik AI – Pomocnik Serwisu</strong>
+                        <div style="font-size:11px; color:#15ff00;">● Serwis Zielona Góra</div>
+                    </div>
+                </div>
+                <button type="button" class="fixik-close" onclick="toggleFixikWindow(false)">✕</button>
+            </div>
+
+            <div class="fixik-body" id="fixik-messages">
+                <div class="fixik-msg fixik-msg--bot">
+                    Uszanowanie, Szanowny Panie! 👋 Jestem <strong>Fixik 🤖</strong> – asystent i pomocna dłoń mobilnego serwisu rowerowego <strong>bikefix</strong>! 🚴‍♂️✨
+                    <br><br>
+                    Polecam nasz <strong>Przegląd ogólny za jedyne 65 zł</strong> z pełnym myciem roweru oraz darmowym dojazdem do klienta!
+                    <div class="fixik-disclaimer-box">
+                        ℹ️ <em>Pamiętaj: Jestem wirtualnym asystentem AI. Kwestiami wycen części oraz diagnostyką zajmuje się nasz człowiek-serwisant Łukasz.</em>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fixik-chips">
+                <button type="button" class="fixik-chip" onclick="sendFixikChip('Co wchodzi w przegląd i ile kosztuje?')">💰 Przegląd i cena</button>
+                <button type="button" class="fixik-chip" onclick="sendFixikChip('Jak działa panel klienta i kod?')">🔑 Jak działa panel klienta?</button>
+                <button type="button" class="fixik-chip" onclick="sendFixikChip('Dlaczego mycie roweru jest w cenie?')">🧼 Mycie roweru w cenie</button>
+                <button type="button" class="fixik-chip" onclick="sendFixikChip('Co w przypadku wymiany części?')">🔩 Wymiana części</button>
+                <button type="button" class="fixik-chip" onclick="sendFixikChip('Jak skontaktować się z mechanikiem?')">📞 Kontakt z mechanikiem</button>
+            </div>
+
+            <div class="fixik-footer">
+                <input type="text" id="fixik-input" placeholder="Zadaj pytanie Fixikowi..." onkeypress="if(event.key==='Enter') sendFixikUserMsg()">
+                <button type="button" onclick="sendFixikUserMsg()">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

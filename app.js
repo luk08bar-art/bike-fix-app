@@ -1,15 +1,17 @@
-// app.js – BikeFix SPA without email/password authentication
+// app.js – BikeFix SPA without email/password auth
 
 /*** 1. SUPABASE CONFIGURATION ***/
 const SUPABASE_URL = 'https://vrnarcpmttwnowolhxnw.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_mDCab83XNSsH8A1dhlRXAQ_S_MYdkr7';
-const { createClient } = window.supabase;
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Initialise Supabase client safely (singleton)
+window.supabaseClient = window.supabaseClient ||
+    window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = window.supabaseClient;
 
 /*** 2. GLOBAL STATE ***/
-let orders = [];          // fetched from Supabase
-let usedOpinions = [];    // fetched from Supabase
-const MECHANIC_CODE = 'nowostandardowy19.18wis'; // mechanic access code
+let orders = [];          // fetched orders from Supabase
+let usedOpinions = [];    // fetched used_opinions from Supabase
+const MECHANIC_CODE = 'nowostandardowy19.18wis'; // only mechanic access code
 
 /*** 3. VIEW HELPERS ***/
 function switchView(viewId) {
@@ -138,7 +140,7 @@ function renderMechanicView() {
     </form>
   `;
 
-  // Fixika (set status to "Gotowe")
+  // Fixika – set status to "Gotowe"
   container.querySelectorAll('.fix-button').forEach(btn => {
     btn.addEventListener('click', async e => {
       const tr = e.target.closest('tr');
@@ -198,6 +200,6 @@ function showCodeEntry() {
 
 /*** 10. STARTUP ***/
 document.addEventListener('DOMContentLoaded', async () => {
-  // Show the single access‑code entry immediately
+  // Show the access‑code entry immediately (no email/password auth)
   showCodeEntry();
 });
